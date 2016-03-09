@@ -1,0 +1,6 @@
+[template]
+src = "registry.tmpl"
+dest = "/usr/local/etc/registry/config.yml"
+keys = [
+  "/self/service/metadata"
+]

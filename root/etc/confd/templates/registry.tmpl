@@ -1,0 +1,45 @@
+version: 0.1
+log:
+  level: warn
+  fields:
+    service: registry
+    environment: production
+storage:
+  cache:
+    blobdescriptor: redis
+  filesystem:
+    rootdirectory: {{getv "/self/service/metadata/volume_path"}}
+  delete:
+    enabled: true
+auth:
+  token:
+    realm: https://{{getv "/self/service/metadata/fqdn"}}/v2/token
+    service: {{getv "/self/service/metadata/fqdn"}}
+    issuer: {{getv "/self/service/metadata/fqdn"}}
+    rootcertbundle: {{getv "/self/service/metadata/ssl_fullchain"}}
+http:
+  addr: 0.0.0.0:5000
+  host: https://{{getv "/self/service/metadata/fqdn"}}
+  headers:
+    X-Content-Type-Options: [nosniff]
+redis:
+  addr: redis:6379
+  pool:
+    maxidle: 16
+    maxactive: 64
+    idletimeout: 300s
+  dialtimeout: 10ms
+  readtimeout: 10ms
+  writetimeout: 10ms
+health:
+  storagedriver:
+    enabled: true
+    interval: 10s
+    threshold: 3
+notifications:
+  endpoints:
+    - name: portus
+      url: http://portus/v2/webhooks/events
+      timeout: 500ms
+      threshold: 5
+      backoff: 1s
